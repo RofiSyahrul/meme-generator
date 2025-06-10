@@ -1,11 +1,15 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {MemeElement, MemeTemplate} from '@/types/store';
+import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
+import {MemeElement, MemeTemplate} from '@/types/meme';
+
+import { fetchTemplates } from './meme-service';
 
 interface MemeState {
   templates: MemeTemplate[];
   selectedTemplate: MemeTemplate | null;
   elements: MemeElement[];
   selectedElement: MemeElement | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: MemeState = {
@@ -13,15 +17,14 @@ const initialState: MemeState = {
   selectedTemplate: null,
   elements: [],
   selectedElement: null,
+  loading: true,
+  error: null,
 };
 
 const memeSlice = createSlice({
   name: 'meme',
   initialState,
   reducers: {
-    setTemplates: (state, action: PayloadAction<MemeTemplate[]>) => {
-      state.templates = action.payload;
-    },
     setSelectedTemplate: (state, action: PayloadAction<MemeTemplate>) => {
       state.selectedTemplate = action.payload;
     },
@@ -41,14 +44,28 @@ const memeSlice = createSlice({
       state.selectedElement = action.payload;
     },
   },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchTemplates.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTemplates.fulfilled, (state, action) => {
+        state.loading = false;
+        state.templates = action.payload;
+      })
+      .addCase(fetchTemplates.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export const {
-  setTemplates,
   setSelectedTemplate,
   addElement,
   updateElement,
   setSelectedElement,
 } = memeSlice.actions;
 
-export default memeSlice.reducer;
+export default memeSlice;

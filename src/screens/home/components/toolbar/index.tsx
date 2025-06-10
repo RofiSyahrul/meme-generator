@@ -2,7 +2,7 @@ import React from 'react';
 import {View, TouchableOpacity, Text, Dimensions} from 'react-native';
 import {useAppDispatch} from '@/store/hooks';
 import {addElement} from '@/store/meme/meme-slice';
-import {MemeElement} from '@/types/store';
+import {MemeElement} from '@/types/meme';
 import {styles} from './styles';
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');

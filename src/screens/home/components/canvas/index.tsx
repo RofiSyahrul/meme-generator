@@ -2,10 +2,7 @@ import React from 'react';
 import {View, Image, Text, TouchableOpacity} from 'react-native';
 import {useAppSelector, useAppDispatch} from '@/store/hooks';
 import {setSelectedElement} from '@/store/meme/meme-slice';
-import {
-  Gesture,
-  GestureDetector,
-} from 'react-native-gesture-handler';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,

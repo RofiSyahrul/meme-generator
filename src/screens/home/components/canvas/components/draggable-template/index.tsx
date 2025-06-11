@@ -8,10 +8,10 @@ import {
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 
-import {usePanGesture, usePinchGesture} from '@/hooks/gesture';
-import type {MemeTemplate} from '@/types/meme';
+import {usePanGesture, usePinchGesture} from '~/hooks/gesture';
+import {cn} from '~/lib/utils';
+import type {MemeTemplate} from '~/types/meme';
 
-import {styles} from './styles';
 import {
   CONTAINER_PADDING,
   CONTAINER_PADDING_FACTOR,
@@ -24,6 +24,12 @@ interface DraggableTemplateProps {
   maxWidth: number;
   template: MemeTemplate;
 }
+
+export const CONTAINER_CLASS_NAME = cn(
+  'absolute top-0 left-0 right-0 w-full h-full',
+  'bg-background rounded-xl shadow-foreground shadow-md elevation',
+  'border border-border border-solid overflow-hidden',
+);
 
 export const DraggableTemplate: FC<DraggableTemplateProps> = ({
   children,
@@ -117,11 +123,16 @@ export const DraggableTemplate: FC<DraggableTemplateProps> = ({
   return (
     <GestureDetector gesture={containerGesture}>
       <Animated.View
-        style={[styles.container, containerAnimatedStyle, containerStyle]}>
+        className={CONTAINER_CLASS_NAME}
+        style={[containerAnimatedStyle, containerStyle]}>
         <GestureDetector gesture={templateGesture}>
           <Animated.View
+            className={cn(
+              'absolute w-full h-full bg-accent rounded-lg',
+              'overflow-hidden justify-center items-center',
+              'shadow-foreground shadow-md elevation',
+            )}
             style={[
-              styles.template,
               templateAnimatedStyle,
               templateHeight > 0 && {
                 height: templateHeight,
@@ -130,10 +141,11 @@ export const DraggableTemplate: FC<DraggableTemplateProps> = ({
             ]}>
             <Image
               source={{uri: template.url}}
-              style={styles.image}
+              className="w-full h-full"
               onLoad={handleImageLoad}
               onError={handleImageError}
               resizeMethod="resize"
+              resizeMode="contain"
             />
           </Animated.View>
         </GestureDetector>

@@ -1,5 +1,6 @@
-import {MemeTemplate} from '@/types/meme';
 import {createAsyncThunk} from '@reduxjs/toolkit';
+
+import {MemeTemplate} from '~/types/meme';
 
 const IMGFLIP_API_URL = 'https://api.imgflip.com';
 

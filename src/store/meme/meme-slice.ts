@@ -1,5 +1,6 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
-import {MemeElement, MemeTemplate} from '@/types/meme';
+
+import type {MemeElement, MemeTemplate} from '~/types/meme';
 
 import {fetchTemplates} from './meme-service';
 

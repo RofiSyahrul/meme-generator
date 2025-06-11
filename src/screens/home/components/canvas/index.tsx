@@ -1,12 +1,14 @@
 import {type FC, useCallback, useState} from 'react';
-import {View, Text, type LayoutChangeEvent} from 'react-native';
+import {View, type LayoutChangeEvent} from 'react-native';
 
-import {useAppSelector} from '@/store/hooks';
+import {Text} from '~/components/text';
+import {useAppSelector} from '~/store/hooks';
 
-import {DraggableTemplate} from './components/draggable-template';
-import {styles as draggableTemplateStyles} from './components/draggable-template/styles';
+import {
+  CONTAINER_CLASS_NAME,
+  DraggableTemplate,
+} from './components/draggable-template';
 import {MemeElements} from './components/meme-elements';
-import {styles} from './styles';
 
 export const Canvas: FC = () => {
   const selectedTemplate = useAppSelector(state => state.meme.selectedTemplate);
@@ -20,28 +22,26 @@ export const Canvas: FC = () => {
     setContainerWidth(width);
   }, []);
 
-  if (!selectedTemplate) {
-    return (
-      <View onLayout={handleContainerLayout} style={styles.container}>
-        <View style={draggableTemplateStyles.container}>
-          <View style={styles.emptyCanvas}>
-            <Text style={styles.emptyCanvasText}>
+  return (
+    <View
+      className="relative flex-1 m-2 rounded-xl overflow-hidden"
+      onLayout={handleContainerLayout}>
+      {selectedTemplate ? (
+        <DraggableTemplate
+          maxHeight={containerHeight}
+          maxWidth={containerWidth}
+          template={selectedTemplate}>
+          <MemeElements />
+        </DraggableTemplate>
+      ) : (
+        <View className={CONTAINER_CLASS_NAME}>
+          <View className="flex-1 justify-center items-center bg-background rounded-lg border-2 border-border border-dashed">
+            <Text className="text-center p-5 text-muted-foreground">
               Select a template to start creating your meme
             </Text>
           </View>
         </View>
-      </View>
-    );
-  }
-
-  return (
-    <View onLayout={handleContainerLayout} style={styles.container}>
-      <DraggableTemplate
-        maxHeight={containerHeight}
-        maxWidth={containerWidth}
-        template={selectedTemplate}>
-        <MemeElements />
-      </DraggableTemplate>
+      )}
     </View>
   );
 };

@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, ScrollView, TouchableOpacity, Text, Image} from 'react-native';
+import {View, ScrollView, TouchableOpacity, Image} from 'react-native';
 
-import {useAppSelector, useAppDispatch} from '@/store/hooks';
-import {setSelectedTemplate} from '@/store/meme/meme-slice';
-
-import {styles} from './styles';
+import {Text} from '~/components/text';
+import {cn} from '~/lib/utils';
+import {useAppSelector, useAppDispatch} from '~/store/hooks';
+import {setSelectedTemplate} from '~/store/meme/meme-slice';
 
 export const TemplateSelector: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -12,7 +12,7 @@ export const TemplateSelector: React.FC = () => {
   const selectedTemplate = useAppSelector(state => state.meme.selectedTemplate);
 
   return (
-    <View style={styles.container}>
+    <View className="h-32 border-t border-t-muted-foreground border-solid">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -20,16 +20,20 @@ export const TemplateSelector: React.FC = () => {
         {templates.map(template => (
           <TouchableOpacity
             key={template.id}
-            style={[
-              styles.templateItem,
-              selectedTemplate?.id === template.id && styles.selectedTemplate,
-            ]}
+            className={cn(
+              'w-24 m-1 p-1 items-center',
+              selectedTemplate?.id === template.id &&
+                'border-2 border-primary rounded',
+            )}
             onPress={() => dispatch(setSelectedTemplate(template))}>
             <Image
               source={{uri: template.url}}
-              style={styles.templateThumbnail}
+              className="w-20 h-20 rounded"
+              resizeMode="contain"
             />
-            <Text style={styles.templateName} numberOfLines={1}>
+            <Text
+              className="text-xs mt-1 text-center text-muted-foreground"
+              numberOfLines={1}>
               {template.name}
             </Text>
           </TouchableOpacity>

@@ -13,7 +13,10 @@ export const TemplateSelector: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        removeClippedSubviews>
         {templates.map(template => (
           <TouchableOpacity
             key={template.id}
@@ -22,7 +25,10 @@ export const TemplateSelector: React.FC = () => {
               selectedTemplate?.id === template.id && styles.selectedTemplate,
             ]}
             onPress={() => dispatch(setSelectedTemplate(template))}>
-            <Image source={{uri: template.url}} style={styles.templateThumbnail} />
+            <Image
+              source={{uri: template.url}}
+              style={styles.templateThumbnail}
+            />
             <Text style={styles.templateName} numberOfLines={1}>
               {template.name}
             </Text>

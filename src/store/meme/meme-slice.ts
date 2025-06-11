@@ -1,12 +1,12 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {MemeElement, MemeTemplate} from '@/types/meme';
 
-import { fetchTemplates } from './meme-service';
+import {fetchTemplates} from './meme-service';
 
 interface MemeState {
   templates: MemeTemplate[];
   selectedTemplate: MemeTemplate | null;
-  elements: MemeElement[];
+  elementMap: Record<string, MemeElement>;
   selectedElement: MemeElement | null;
   loading: boolean;
   error: string | null;
@@ -15,7 +15,7 @@ interface MemeState {
 const initialState: MemeState = {
   templates: [],
   selectedTemplate: null,
-  elements: [],
+  elementMap: {},
   selectedElement: null,
   loading: true,
   error: null,
@@ -29,13 +29,16 @@ const memeSlice = createSlice({
       state.selectedTemplate = action.payload;
     },
     addElement: (state, action: PayloadAction<MemeElement>) => {
-      state.elements.push(action.payload);
+      state.elementMap[action.payload.id] = action.payload;
     },
     updateElement: (
       state,
-      action: PayloadAction<{id: string; updates: Partial<MemeElement>}>,
+      action: PayloadAction<{
+        id: string;
+        updates: Partial<Omit<MemeElement, 'id'>>;
+      }>,
     ) => {
-      const element = state.elements.find(el => el.id === action.payload.id);
+      const element = state.elementMap[action.payload.id];
       if (element) {
         Object.assign(element, action.payload.updates);
       }

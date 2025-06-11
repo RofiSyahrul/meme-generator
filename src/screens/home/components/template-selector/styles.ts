@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 5,
+    resizeMode: 'contain',
   },
   templateName: {
     fontSize: 12,

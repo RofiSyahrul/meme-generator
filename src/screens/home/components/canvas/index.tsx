@@ -1,104 +1,47 @@
-import React from 'react';
-import {View, Image, Text, TouchableOpacity} from 'react-native';
-import {useAppSelector, useAppDispatch} from '@/store/hooks';
-import {setSelectedElement} from '@/store/meme/meme-slice';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
+import {type FC, useCallback, useState} from 'react';
+import {View, Text, type LayoutChangeEvent} from 'react-native';
 
+import {useAppSelector} from '@/store/hooks';
+
+import {DraggableTemplate} from './components/draggable-template';
+import {styles as draggableTemplateStyles} from './components/draggable-template/styles';
+import {MemeElements} from './components/meme-elements';
 import {styles} from './styles';
 
-export const Canvas: React.FC = () => {
-  const dispatch = useAppDispatch();
+export const Canvas: FC = () => {
   const selectedTemplate = useAppSelector(state => state.meme.selectedTemplate);
-  const elements = useAppSelector(state => state.meme.elements);
 
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const savedTranslateX = useSharedValue(0);
-  const savedTranslateY = useSharedValue(0);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
 
-  const pinchGesture = Gesture.Pinch()
-    .onStart(() => {
-      savedScale.value = scale.value;
-    })
-    .onUpdate(event => {
-      scale.value = savedScale.value * event.scale;
-    });
+  const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
+    const {height, width} = event.nativeEvent.layout;
+    setContainerHeight(height);
+    setContainerWidth(width);
+  }, []);
 
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      savedTranslateX.value = translateX.value;
-      savedTranslateY.value = translateY.value;
-    })
-    .onUpdate(event => {
-      translateX.value = savedTranslateX.value + event.translationX;
-      translateY.value = savedTranslateY.value + event.translationY;
-    });
-
-  const simultaneousGesture = Gesture.Simultaneous(pinchGesture, panGesture);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {translateX: translateX.value},
-        {translateY: translateY.value},
-        {scale: scale.value},
-      ],
-    };
-  });
-
-  return (
-    <GestureDetector gesture={simultaneousGesture}>
-      <Animated.View style={[styles.container, animatedStyle]}>
-        {selectedTemplate ? (
-          <Image
-            source={{uri: selectedTemplate.url}}
-            style={styles.template}
-            resizeMode="contain"
-          />
-        ) : (
+  if (!selectedTemplate) {
+    return (
+      <View onLayout={handleContainerLayout} style={styles.container}>
+        <View style={draggableTemplateStyles.container}>
           <View style={styles.emptyCanvas}>
             <Text style={styles.emptyCanvasText}>
               Select a template to start creating your meme
             </Text>
           </View>
-        )}
-        {elements.map(element => (
-          <TouchableOpacity
-            key={element.id}
-            style={[
-              styles.element,
-              {
-                left: element.position.x,
-                top: element.position.y,
-                transform: [
-                  {scale: element.scale},
-                  {rotate: `${element.rotation}deg`},
-                ],
-              },
-            ]}
-            onLongPress={() => dispatch(setSelectedElement(element))}>
-            {element.type === 'text' ? (
-              <Text style={element.style}>{element.content}</Text>
-            ) : (
-              <Image
-                source={{uri: element.content}}
-                style={[
-                  styles.elementImage,
-                  {
-                    opacity: element.style?.opacity,
-                  },
-                ]}
-              />
-            )}
-          </TouchableOpacity>
-        ))}
-      </Animated.View>
-    </GestureDetector>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View onLayout={handleContainerLayout} style={styles.container}>
+      <DraggableTemplate
+        maxHeight={containerHeight}
+        maxWidth={containerWidth}
+        template={selectedTemplate}>
+        <MemeElements />
+      </DraggableTemplate>
+    </View>
   );
 };

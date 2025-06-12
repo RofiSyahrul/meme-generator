@@ -2,7 +2,7 @@ import {type FC, useCallback, useMemo, useState} from 'react';
 import {View, type LayoutChangeEvent} from 'react-native';
 
 import {Text} from '~/components/text';
-import {useAppSelector} from '~/store/hooks';
+import {useAppDispatch, useAppSelector} from '~/store/hooks';
 
 import {
   CONTAINER_CLASS_NAME,
@@ -11,12 +11,16 @@ import {
 import {MemeElements} from './components/meme-elements';
 import {ElementActions} from './components/element-actions';
 import type {ActionLayouts} from './types';
+import {setTemplateHeight} from '~/store/meme/meme-slice';
 
 export const Canvas: FC = () => {
+  const dispatch = useAppDispatch();
   const selectedTemplate = useAppSelector(state => state.meme.selectedTemplate);
   const draggingElementId = useAppSelector(
     state => state.meme.draggingElementId,
   );
+  const templateHeight = useAppSelector(state => state.meme.templateHeight);
+
   const elementMap = useAppSelector(state => state.meme.elementMap);
   const [buttonLayouts, setButtonLayouts] = useState<ActionLayouts | null>(
     null,
@@ -24,7 +28,6 @@ export const Canvas: FC = () => {
 
   const [containerHeight, setContainerHeight] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [draggableTemplateHeight, setDraggableTemplateHeight] = useState(0);
 
   const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
     const {height, width} = event.nativeEvent.layout;
@@ -34,23 +37,20 @@ export const Canvas: FC = () => {
 
   const handleDraggableTemplateLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      setDraggableTemplateHeight(event.nativeEvent.layout.height);
+      dispatch(setTemplateHeight(event.nativeEvent.layout.height));
     },
-    [],
+    [dispatch],
   );
 
   const actionPlacement = useMemo(() => {
     const draggingElement = draggingElementId
       ? elementMap[draggingElementId]
       : null;
-    if (
-      !draggingElement ||
-      draggingElement.position.y < draggableTemplateHeight / 2
-    ) {
+    if (!draggingElement || draggingElement.position.y < templateHeight / 2) {
       return 'bottom';
     }
     return 'top';
-  }, [draggableTemplateHeight, draggingElementId, elementMap]);
+  }, [templateHeight, draggingElementId, elementMap]);
 
   return (
     <View

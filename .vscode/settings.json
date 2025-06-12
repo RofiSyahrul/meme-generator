@@ -6,5 +6,5 @@
   },
   "editor.formatOnSave": true,
   "css.lint.unknownAtRules": "ignore",
-  "tailwindCSS.classAttributes": ["class", "className"]
+  "tailwindCSS.classAttributes": ["class", "className", "innerClassName"]
 }

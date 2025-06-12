@@ -35,10 +35,12 @@ function DialogOverlayWeb({
 function DialogOverlayNative({
   className,
   children,
+  innerClassName,
   ...props
 }: DialogPrimitive.OverlayProps & {
   ref?: React.RefObject<DialogPrimitive.OverlayRef>;
   children?: React.ReactNode;
+  innerClassName?: string;
 }) {
   return (
     <DialogPrimitive.Overlay
@@ -49,6 +51,7 @@ function DialogOverlayNative({
       )}
       {...props}>
       <Animated.View
+        className={innerClassName}
         entering={FadeIn.duration(150)}
         exiting={FadeOut.duration(150)}>
         {children}

@@ -2,7 +2,6 @@ import React, {useCallback, useRef} from 'react';
 import {type LayoutRectangle, type LayoutChangeEvent} from 'react-native';
 
 import {Button, ButtonProps} from '~/components/button';
-import {Text} from '~/components/text';
 import {Copy, Trash2} from '~/lib/icons';
 import {cn} from '~/lib/utils';
 import {useAppSelector} from '~/store/hooks';
@@ -65,14 +64,12 @@ export const ElementActions: React.FC<ElementActionsProps> = ({
       <ActionButton
         className={`${verticalPlacementClassName} left-1`}
         onLayout={handleDuplicateLayout}>
-        <Copy className="text-primary" />
-        <Text className="text-primary text-xs">Drop to Duplicate</Text>
+        <Copy className="text-foreground" size="40" />
       </ActionButton>
       <ActionButton
         className={`${verticalPlacementClassName} right-1`}
         onLayout={handleRemoveLayout}>
-        <Text className="text-destructive text-xs">Drop to remove</Text>
-        <Trash2 className="text-destructive" />
+        <Trash2 className="text-foreground" size="40" />
       </ActionButton>
     </>
   );
@@ -91,7 +88,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   return (
     <Button
       className={cn(
-        'absolute bg-background/70 backdrop-blur-sm rounded-lg shadow-background shadow-lg p-2 flex-row',
+        'absolute h-16 native:h-16 bg-background/70 backdrop-blur-sm rounded-lg',
+        'shadow-background shadow-lg p-2 flex-row',
         className,
       )}
       onLayout={onLayout}

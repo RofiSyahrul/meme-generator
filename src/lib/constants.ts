@@ -1,5 +1,7 @@
 import type {Theme} from '@react-navigation/native';
 
+import type {MemeElementImageStyle, MemeElementTextStyle} from '~/types/meme';
+
 export const NAV_THEME: Record<'light' | 'dark', Theme['colors']> = {
   light: {
     background: 'hsl(0 0% 100%)', // background
@@ -17,4 +19,18 @@ export const NAV_THEME: Record<'light' | 'dark', Theme['colors']> = {
     primary: 'hsl(217.2 91.2% 59.8%)', // primary
     text: 'hsl(210 40% 98%)', // foreground
   },
+};
+
+export const DEFAULT_MEME_TEXT_STYLE: MemeElementTextStyle = {
+  backgroundColor: 'transparent',
+  color: NAV_THEME.light.text,
+  fontFamily: 'System',
+  fontSize: 20,
+  opacity: 1,
+  textAlign: 'center',
+};
+
+export const DEFAULT_MEME_IMAGE_STYLE: MemeElementImageStyle = {
+  backgroundColor: DEFAULT_MEME_TEXT_STYLE.backgroundColor,
+  opacity: DEFAULT_MEME_TEXT_STYLE.opacity,
 };

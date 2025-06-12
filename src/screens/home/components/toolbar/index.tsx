@@ -1,12 +1,16 @@
-import {useColorScheme} from 'nativewind';
 import React, {useCallback} from 'react';
 import {View, Dimensions} from 'react-native';
+
+import {useTheme} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Button} from '~/components/button';
 import {Text} from '~/components/text';
-import {NAV_THEME} from '~/lib/constants';
-import {ImagePlus, TextCursorInput} from '~/lib/icons';
+import {
+  DEFAULT_MEME_IMAGE_STYLE,
+  DEFAULT_MEME_TEXT_STYLE,
+} from '~/lib/constants';
+import {ImagePlus, Type} from '~/lib/icons';
 import {useAppDispatch, useAppSelector} from '~/store/hooks';
 import {addElement} from '~/store/meme/meme-slice';
 import {MemeElement} from '~/types/meme';
@@ -26,7 +30,7 @@ export const Toolbar: React.FC = () => {
     state => !!state.meme.selectedTemplate,
   );
 
-  const {colorScheme = 'dark'} = useColorScheme();
+  const {colors} = useTheme();
 
   const handleAddText = useCallback(() => {
     const newElement: MemeElement = {
@@ -37,13 +41,12 @@ export const Toolbar: React.FC = () => {
       scale: 1,
       rotation: 0,
       style: {
-        color: NAV_THEME[colorScheme].text,
-        fontSize: 24,
-        fontFamily: 'System',
+        ...DEFAULT_MEME_TEXT_STYLE,
+        color: colors.text,
       },
     };
     dispatch(addElement(newElement));
-  }, [colorScheme, dispatch]);
+  }, [colors.text, dispatch]);
 
   const handleImagePicker = useCallback(async () => {
     try {
@@ -70,10 +73,7 @@ export const Toolbar: React.FC = () => {
           position: {...DEFAULT_POSITION},
           scale: 1,
           rotation: 0,
-          style: {
-            opacity: 1,
-            blur: 0,
-          },
+          style: {...DEFAULT_MEME_IMAGE_STYLE},
         };
         dispatch(addElement(newElement));
       }
@@ -88,7 +88,7 @@ export const Toolbar: React.FC = () => {
         disabled={!hasSelectedTemplate}
         variant="ghost"
         onPress={handleAddText}>
-        <TextCursorInput className="text-foreground" />
+        <Type className="text-foreground" />
         <Text>Text</Text>
       </Button>
       <Button

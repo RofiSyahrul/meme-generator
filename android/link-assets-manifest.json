@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/NotoSans.ttf",
+      "sha1": "f04a504e2078d6c01b3bf453c0d18c4f77c2133b"
+    },
+    {
+      "path": "src/assets/fonts/Quicksand.ttf",
+      "sha1": "339f8d3e09ad271ff12727eef33a99f7a066eee3"
+    },
+    {
+      "path": "src/assets/fonts/Roboto.ttf",
+      "sha1": "fa5192203f85ddb667579e1bdf26f12098bb873b"
+    },
+    {
+      "path": "src/assets/fonts/VictorMono.ttf",
+      "sha1": "c8cd3689becf0d45d13a09d5ef025b37acd1963a"
+    }
+  ]
+}

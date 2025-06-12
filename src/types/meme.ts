@@ -6,25 +6,45 @@ export interface MemeTemplate {
   height: number;
 }
 
-export interface MemeElement {
+export interface MemeElementCommonStyle {
+  opacity: number;
+  backgroundColor: string;
+}
+
+export interface MemeElementTextStyle extends MemeElementCommonStyle {
+  color: string;
+  fontFamily: string;
+  fontSize: number;
+  textAlign: 'left' | 'center' | 'right';
+}
+
+export interface MemeElementImageStyle extends MemeElementCommonStyle {}
+
+interface MemeElementBase {
   id: string;
-  type: 'text' | 'image';
-  content: string;
   position: {
     x: number;
     y: number;
   };
   scale: number;
   rotation: number;
-  style?: {
-    fontSize?: number;
-    color?: string;
-    fontFamily?: string;
-    textAlign?: 'left' | 'center' | 'right';
-    opacity?: number;
-    blur?: number;
-  };
 }
+
+interface MemeElementText extends MemeElementBase {
+  type: 'text';
+  /** Text content */
+  content: string;
+  style: MemeElementTextStyle;
+}
+
+interface MemeElementImage extends MemeElementBase {
+  type: 'image';
+  /** Image URI */
+  content: string;
+  style: MemeElementImageStyle;
+}
+
+export type MemeElement = MemeElementText | MemeElementImage;
 
 export interface MemeState {
   templates: MemeTemplate[];

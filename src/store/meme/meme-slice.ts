@@ -1,8 +1,15 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 
-import type {MemeElement, MemeTemplate} from '~/types/meme';
+import type {
+  MemeElement,
+  MemeElementCommonStyle,
+  MemeElementImageStyle,
+  MemeElementTextStyle,
+  MemeTemplate,
+} from '~/types/meme';
 
 import {fetchTemplates} from './meme-service';
+import {WritableDraft} from 'immer';
 
 interface MemeState {
   templates: MemeTemplate[];
@@ -10,6 +17,7 @@ interface MemeState {
   elementMap: Record<string, MemeElement>;
   selectedElement: MemeElement | null;
   draggingElementId: string | null;
+  templateHeight: number;
   loading: boolean;
   error: string | null;
 }
@@ -20,8 +28,17 @@ const initialState: MemeState = {
   elementMap: {},
   selectedElement: null,
   draggingElementId: null,
+  templateHeight: 0,
   loading: true,
   error: null,
+};
+
+type ElementStyleField = keyof (MemeElementTextStyle & MemeElementImageStyle);
+
+type UpdateElementStylePayload<K extends ElementStyleField> = {
+  id: string;
+  name: K;
+  value: MemeElementTextStyle[K];
 };
 
 const memeSlice = createSlice({
@@ -72,8 +89,40 @@ const memeSlice = createSlice({
         state.elementMap[newElement.id] = newElement;
       }
     },
+    updateCommonElementStyle: <K extends keyof MemeElementCommonStyle>(
+      state: WritableDraft<MemeState>,
+      action: PayloadAction<UpdateElementStylePayload<K>>,
+    ) => {
+      const element = state.elementMap[action.payload.id];
+      if (element) {
+        element.style[action.payload.name] = action.payload.value;
+      }
+      if (state.selectedElement?.id === action.payload.id) {
+        state.selectedElement.style[action.payload.name] = action.payload.value;
+      }
+    },
+    updateTextElementStyle: <K extends keyof MemeElementTextStyle>(
+      state: WritableDraft<MemeState>,
+      action: PayloadAction<UpdateElementStylePayload<K>>,
+    ) => {
+      const element = state.elementMap[action.payload.id];
+      if (element?.type === 'text') {
+        element.style[action.payload.name] = action.payload.value;
+      }
+      if (
+        state.selectedElement?.type === 'text' &&
+        state.selectedElement.id === action.payload.id
+      ) {
+        state.selectedElement.style[action.payload.name] = action.payload.value;
+      }
+    },
     setDraggingElementId: (state, action: PayloadAction<string | null>) => {
       state.draggingElementId = action.payload;
+    },
+    setTemplateHeight: (state, action: PayloadAction<number>) => {
+      if (state.templateHeight !== action.payload) {
+        state.templateHeight = action.payload;
+      }
     },
   },
   extraReducers: builder => {
@@ -101,6 +150,21 @@ export const {
   removeElement,
   duplicateElement,
   setDraggingElementId,
+  setTemplateHeight,
 } = memeSlice.actions;
+
+export const updateTextElementStyle = <K extends keyof MemeElementTextStyle>(
+  payload: UpdateElementStylePayload<K>,
+) => {
+  return memeSlice.actions.updateTextElementStyle(payload);
+};
+
+export const updateCommonElementStyle = <
+  K extends keyof MemeElementCommonStyle,
+>(
+  payload: UpdateElementStylePayload<K>,
+) => {
+  return memeSlice.actions.updateCommonElementStyle(payload);
+};
 
 export default memeSlice;

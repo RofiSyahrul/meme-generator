@@ -53,6 +53,8 @@ const DraggableElement: FC<DraggableElementProps> = ({
   const lastPressedRef = useRef(0);
   const dispatch = useAppDispatch();
 
+  const {backgroundColor, ...restStyle} = element.style;
+
   const [scale, pinchGesture] = usePinchGesture(element.scale);
   const [rotation, rotationGesture] = useRotationGesture(element.rotation);
 
@@ -143,14 +145,21 @@ const DraggableElement: FC<DraggableElementProps> = ({
           style={[animatedStyle, isSelected && styles.elementSelected]}>
           <Pressable onPress={handlePress}>
             {element.type === 'text' ? (
-              <Text style={element.style}>{element.content}</Text>
+              <View
+                className="w-full p-1 rounded"
+                style={{backgroundColor: backgroundColor}}>
+                <Text className="text-wrap" style={restStyle}>
+                  {element.content}
+                </Text>
+              </View>
             ) : (
-              <Image
-                className="w-24 h-24 rounded"
-                resizeMode="contain"
-                source={{uri: element.content}}
-                style={{opacity: element.style?.opacity}}
-              />
+              <View className="p-0.5 rounded" style={element.style}>
+                <Image
+                  className="w-24 h-24 rounded"
+                  resizeMode="contain"
+                  source={{uri: element.content}}
+                />
+              </View>
             )}
           </Pressable>
         </Animated.View>
@@ -171,14 +180,18 @@ export const MemeElements: FC<{
 
   return (
     <Fragment>
-      {elements.map(element => (
-        <DraggableElement
-          key={element.id}
-          element={element}
-          isSelected={element.id === selectedElement?.id}
-          buttonLayouts={buttonLayouts}
-        />
-      ))}
+      {elements.map(element => {
+        return (
+          element.id !== selectedElement?.id && (
+            <DraggableElement
+              key={element.id}
+              element={element}
+              isSelected={element.id === selectedElement?.id}
+              buttonLayouts={buttonLayouts}
+            />
+          )
+        );
+      })}
     </Fragment>
   );
 };

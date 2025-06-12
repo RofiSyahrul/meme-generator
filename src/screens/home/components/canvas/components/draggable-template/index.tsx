@@ -1,6 +1,7 @@
 import {useCallback, useState, type FC, type ReactNode} from 'react';
 import {
   Image,
+  LayoutChangeEvent,
   type ImageErrorEventData,
   type NativeSyntheticEvent,
   type ViewStyle,
@@ -22,6 +23,7 @@ interface DraggableTemplateProps {
   children: ReactNode;
   maxHeight: number;
   maxWidth: number;
+  onLayout: (event: LayoutChangeEvent) => void;
   template: MemeTemplate;
 }
 
@@ -35,6 +37,7 @@ export const DraggableTemplate: FC<DraggableTemplateProps> = ({
   children,
   maxHeight,
   maxWidth,
+  onLayout,
   template,
 }) => {
   const [templateWidth, templateHeight] = useTemplateSize(
@@ -124,6 +127,7 @@ export const DraggableTemplate: FC<DraggableTemplateProps> = ({
     <GestureDetector gesture={containerGesture}>
       <Animated.View
         className={CONTAINER_CLASS_NAME}
+        onLayout={onLayout}
         style={[containerAnimatedStyle, containerStyle]}>
         <GestureDetector gesture={templateGesture}>
           <Animated.View

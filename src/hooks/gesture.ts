@@ -41,3 +41,20 @@ export const usePinchGesture = (defaultScale = 1) => {
 
   return [scale, pinchGesture] as const;
 };
+
+export const useRotationGesture = (defaultRotation = 0) => {
+  const savedRotation = useSharedValue(defaultRotation);
+  const rotation = useSharedValue(defaultRotation);
+
+  const rotationGesture = useMemo(() => {
+    return Gesture.Rotation()
+      .onStart(() => {
+        savedRotation.value = rotation.value;
+      })
+      .onUpdate(event => {
+        rotation.value = savedRotation.value + event.rotation;
+      });
+  }, [savedRotation, rotation]);
+
+  return [rotation, rotationGesture] as const;
+};

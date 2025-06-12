@@ -1,12 +1,12 @@
 import {useColorScheme} from 'nativewind';
 import React, {useCallback} from 'react';
 import {View, Dimensions} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Button} from '~/components/button';
 import {Text} from '~/components/text';
 import {NAV_THEME} from '~/lib/constants';
-import {ImagePlus} from '~/lib/icons/image-plus';
-import {TextCursorInput} from '~/lib/icons/text-cursor-input';
+import {ImagePlus, TextCursorInput} from '~/lib/icons';
 import {useAppDispatch, useAppSelector} from '~/store/hooks';
 import {addElement} from '~/store/meme/meme-slice';
 import {MemeElement} from '~/types/meme';
@@ -45,20 +45,41 @@ export const Toolbar: React.FC = () => {
     dispatch(addElement(newElement));
   }, [colorScheme, dispatch]);
 
-  const handleAddImage = useCallback(() => {
-    const newElement: MemeElement = {
-      id: Date.now().toString(),
-      type: 'image',
-      content: 'https://picsum.photos/200/200',
-      position: {...DEFAULT_POSITION},
-      scale: 1,
-      rotation: 0,
-      style: {
-        opacity: 1,
-        blur: 0,
-      },
-    };
-    dispatch(addElement(newElement));
+  const handleImagePicker = useCallback(async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+        includeBase64: false,
+      });
+
+      if (result.didCancel) {
+        return;
+      }
+
+      if (result.errorCode) {
+        console.error('ImagePicker Error: ', result.errorMessage);
+        return;
+      }
+
+      if (result.assets && result.assets[0]?.uri) {
+        const newElement: MemeElement = {
+          id: Date.now().toString(),
+          type: 'image',
+          content: result.assets[0].uri,
+          position: {...DEFAULT_POSITION},
+          scale: 1,
+          rotation: 0,
+          style: {
+            opacity: 1,
+            blur: 0,
+          },
+        };
+        dispatch(addElement(newElement));
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+    }
   }, [dispatch]);
 
   return (
@@ -73,7 +94,7 @@ export const Toolbar: React.FC = () => {
       <Button
         disabled={!hasSelectedTemplate}
         variant="ghost"
-        onPress={handleAddImage}>
+        onPress={handleImagePicker}>
         <ImagePlus className="text-foreground" />
         <Text>Image</Text>
       </Button>

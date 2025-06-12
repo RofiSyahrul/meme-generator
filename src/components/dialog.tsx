@@ -3,7 +3,7 @@ import {Platform, StyleSheet, View, type ViewProps} from 'react-native';
 import * as DialogPrimitive from '@rn-primitives/dialog';
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 
-import {XIcon} from '~/lib/icons/x';
+import {XIcon} from '~/lib/icons';
 import {cn} from '~/lib/utils';
 
 export const Dialog = DialogPrimitive.Root;

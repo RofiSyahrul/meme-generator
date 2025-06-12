@@ -1,37 +1,74 @@
 import {Fragment, useCallback, useMemo, useRef, type FC} from 'react';
-import {Image, Pressable, Text, View} from 'react-native';
+import {Image, LayoutRectangle, Pressable, Text, View} from 'react-native';
 
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {runOnJS, useAnimatedStyle} from 'react-native-reanimated';
 
-import {usePanGesture, usePinchGesture} from '~/hooks/gesture';
+import {
+  usePanGesture,
+  usePinchGesture,
+  useRotationGesture,
+} from '~/hooks/gesture';
 import {useAppDispatch, useAppSelector} from '~/store/hooks';
-import {updateElement, setSelectedElement} from '~/store/meme/meme-slice';
+import {
+  updateElement,
+  setSelectedElement,
+  setDraggingElementId,
+  duplicateElement,
+  removeElement,
+} from '~/store/meme/meme-slice';
 import type {MemeElement} from '~/types/meme';
 
 import {styles} from './styles';
 import {cn} from '~/lib/utils';
 
+import type {ActionLayouts} from '../../types';
+
 interface DraggableElementProps {
   element: MemeElement;
   isSelected: boolean;
+  buttonLayouts: ActionLayouts | null;
 }
 
 const DOUBLE_TAP_MAX_DIFF = 300;
 
-const DraggableElement: FC<DraggableElementProps> = ({element, isSelected}) => {
+const isPointInRect = (
+  x: number,
+  y: number,
+  rect: LayoutRectangle,
+): boolean => {
+  return (
+    x >= rect.x &&
+    x <= rect.x + rect.width &&
+    y >= rect.y &&
+    y <= rect.y + rect.height
+  );
+};
+
+const DraggableElement: FC<DraggableElementProps> = ({
+  element,
+  isSelected,
+  buttonLayouts,
+}) => {
   const lastPressedRef = useRef(0);
   const dispatch = useAppDispatch();
 
   const [scale, pinchGesture] = usePinchGesture(element.scale);
+  const [rotation, rotationGesture] = useRotationGesture(element.rotation);
 
   pinchGesture
     .onEnd(() => {
-      runOnJS(() => {
-        dispatch(
-          updateElement({id: element.id, updates: {scale: scale.value}}),
-        );
-      })();
+      runOnJS(dispatch)(
+        updateElement({id: element.id, updates: {scale: scale.value}}),
+      );
+    })
+    .runOnJS(true);
+
+  rotationGesture
+    .onEnd(() => {
+      runOnJS(dispatch)(
+        updateElement({id: element.id, updates: {rotation: rotation.value}}),
+      );
     })
     .runOnJS(true);
 
@@ -42,24 +79,50 @@ const DraggableElement: FC<DraggableElementProps> = ({element, isSelected}) => {
 
   panGesture
     .onEnd(() => {
-      runOnJS(() => {
-        dispatch(
-          updateElement({
-            id: element.id,
-            updates: {position: {x: translateX.value, y: translateY.value}},
-          }),
-        );
-      })();
+      runOnJS(dispatch)(setDraggingElementId(null));
+      runOnJS(dispatch)(
+        updateElement({
+          id: element.id,
+          updates: {position: {x: translateX.value, y: translateY.value}},
+        }),
+      );
     })
     .runOnJS(true);
 
-  const gesture = Gesture.Simultaneous(pinchGesture, panGesture);
+  const panGestureToTrackDragging = useMemo(() => {
+    return Gesture.Pan().runOnJS(true);
+  }, []);
+
+  panGestureToTrackDragging
+    .onStart(() => {
+      runOnJS(dispatch)(setDraggingElementId(element.id));
+    })
+    .onEnd(({absoluteX, absoluteY}) => {
+      if (!buttonLayouts) {
+        return;
+      }
+
+      if (isPointInRect(absoluteX, absoluteY, buttonLayouts.duplicate)) {
+        runOnJS(dispatch)(duplicateElement(element.id));
+        runOnJS(dispatch)(setDraggingElementId(null));
+      } else if (isPointInRect(absoluteX, absoluteY, buttonLayouts.remove)) {
+        runOnJS(dispatch)(removeElement(element.id));
+      }
+    });
+
+  const gesture = Gesture.Simultaneous(
+    pinchGesture,
+    panGesture,
+    rotationGesture,
+    panGestureToTrackDragging,
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       {translateX: translateX.value},
       {translateY: translateY.value},
       {scale: scale.value},
+      {rotate: `${rotation.value}rad`},
     ],
   }));
 
@@ -96,7 +159,9 @@ const DraggableElement: FC<DraggableElementProps> = ({element, isSelected}) => {
   );
 };
 
-export const MemeElements: FC = () => {
+export const MemeElements: FC<{
+  buttonLayouts: ActionLayouts | null;
+}> = ({buttonLayouts}) => {
   const elementMap = useAppSelector(state => state.meme.elementMap);
   const selectedElement = useAppSelector(state => state.meme.selectedElement);
 
@@ -111,6 +176,7 @@ export const MemeElements: FC = () => {
           key={element.id}
           element={element}
           isSelected={element.id === selectedElement?.id}
+          buttonLayouts={buttonLayouts}
         />
       ))}
     </Fragment>

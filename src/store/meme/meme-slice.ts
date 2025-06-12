@@ -9,6 +9,7 @@ interface MemeState {
   selectedTemplate: MemeTemplate | null;
   elementMap: Record<string, MemeElement>;
   selectedElement: MemeElement | null;
+  draggingElementId: string | null;
   loading: boolean;
   error: string | null;
 }
@@ -18,6 +19,7 @@ const initialState: MemeState = {
   selectedTemplate: null,
   elementMap: {},
   selectedElement: null,
+  draggingElementId: null,
   loading: true,
   error: null,
 };
@@ -47,6 +49,32 @@ const memeSlice = createSlice({
     setSelectedElement: (state, action: PayloadAction<MemeElement | null>) => {
       state.selectedElement = action.payload;
     },
+    removeElement: (state, action: PayloadAction<string>) => {
+      delete state.elementMap[action.payload];
+      if (state.selectedElement?.id === action.payload) {
+        state.selectedElement = null;
+      }
+      if (state.draggingElementId === action.payload) {
+        state.draggingElementId = null;
+      }
+    },
+    duplicateElement: (state, action: PayloadAction<string>) => {
+      const element = state.elementMap[action.payload];
+      if (element) {
+        const newElement: MemeElement = {
+          ...element,
+          id: Date.now().toString(),
+          position: {
+            x: element.position.x + 20,
+            y: element.position.y + 20,
+          },
+        };
+        state.elementMap[newElement.id] = newElement;
+      }
+    },
+    setDraggingElementId: (state, action: PayloadAction<string | null>) => {
+      state.draggingElementId = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -70,6 +98,9 @@ export const {
   addElement,
   updateElement,
   setSelectedElement,
+  removeElement,
+  duplicateElement,
+  setDraggingElementId,
 } = memeSlice.actions;
 
 export default memeSlice;

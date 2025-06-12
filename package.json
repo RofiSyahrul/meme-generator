@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "android:build": "react-native build-android --mode=release",
     "android:release": "npm run android:build && npm run android -- --mode=release",
-    "android:generate-apk": "npm run android:release && android/gradlew assembleRelease",
+    "android:generate-apk": "npm run android:release && cd android && ./gradlew assembleRelease",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

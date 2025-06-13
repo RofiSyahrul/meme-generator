@@ -52,7 +52,9 @@ const memeSlice = createSlice({
     },
     addElement: (state, action: PayloadAction<MemeElement>) => {
       state.elementMap[action.payload.id] = action.payload;
-      state.selectedElement = action.payload;
+      if (action.payload.type === 'text') {
+        state.selectedElement = action.payload;
+      }
     },
     updateElement: (
       state,

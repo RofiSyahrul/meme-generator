@@ -11,7 +11,7 @@ import {
 import {MemeElements} from './components/meme-elements';
 import {ElementActions} from './components/element-actions';
 import type {ActionLayouts} from './types';
-import {setTemplateHeight} from '~/store/meme/meme-slice';
+import {setTemplateSize} from '~/store/meme/meme-slice';
 
 export const Canvas: FC = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ export const Canvas: FC = () => {
 
   const handleDraggableTemplateLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      dispatch(setTemplateHeight(event.nativeEvent.layout.height));
+      dispatch(setTemplateSize(event.nativeEvent.layout));
     },
     [dispatch],
   );

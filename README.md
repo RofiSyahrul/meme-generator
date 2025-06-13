@@ -1,97 +1,117 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Meme Generator
 
-# Getting Started
+A React Native application for creating memes. Built with React Native, TypeScript, and NativeWind for styling.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Prerequisites
 
-## Step 1: Start Metro
+Before you begin, ensure you have the following installed:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- Node.js (>= 18)
+- npm
+- Ruby (for iOS development)
+- Xcode (for iOS development)
+- Android Studio (for Android development)
+- CocoaPods (for iOS development)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Installation
+
+1. Clone the repository:
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+git clone <repository-url>
+cd meme_generator
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+2. Install dependencies:
 
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+npm install
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+3. Install iOS dependencies (iOS only):
 
 ```sh
+cd ios
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+cd ..
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Running the App
+
+### Start Metro Bundler
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm start
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Run on iOS
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```sh
+npm run ios
+```
 
-## Step 3: Modify your app
+### Run on Android
 
-Now that you have successfully run the app, let's make changes!
+```sh
+npm run android
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Available Scripts
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+- `npm start` - Start Metro bundler
+- `npm run ios` - Run on iOS simulator
+- `npm run android` - Run on Android emulator
+- `npm run android:build` - Build Android release version
+- `npm run android:release` - Run Android release version
+- `npm run android:generate-apk` - Generate Android APK
+- `npm run lint` - Run ESLint
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## Project Structure
 
-## Congratulations! :tada:
+```
+meme_generator/
+├── src/               # Source code
+├── android/          # Android specific files
+├── ios/             # iOS specific files
+├── node_modules/    # Dependencies
+└── ...
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+## Dependencies
 
-### Now what?
+Key dependencies include:
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+- React Native
+- TypeScript
+- NativeWind (TailwindCSS for React Native)
+- React Navigation
+- Redux Toolkit
+- React Native Image Picker
+- And more (see package.json for complete list)
 
-# Troubleshooting
+## Features
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Currently, this app supports:
 
-# Learn More
+- Creating memes with custom text and images
+- Adjusting text position and size
+- Saving memes to device
 
-To learn more about React Native, take a look at the following resources:
+## Troubleshooting
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+If you encounter any issues:
+
+1. Make sure all dependencies are installed correctly
+2. For iOS issues:
+   - Run `cd ios && pod install`
+   - Clean build folder in Xcode
+3. For Android issues:
+   - Clean project in Android Studio
+   - Run `cd android && ./gradlew clean`
+
+## Learn More
+
+- [React Native Documentation](https://reactnative.dev)
+- [NativeWind Documentation](https://www.nativewind.dev)
+- [React Navigation Documentation](https://reactnavigation.org)

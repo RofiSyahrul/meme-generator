@@ -18,6 +18,7 @@ interface MemeState {
   selectedElement: MemeElement | null;
   draggingElementId: string | null;
   templateHeight: number;
+  templateWidth: number;
   loading: boolean;
   error: string | null;
 }
@@ -29,6 +30,7 @@ const initialState: MemeState = {
   selectedElement: null,
   draggingElementId: null,
   templateHeight: 0,
+  templateWidth: 0,
   loading: true,
   error: null,
 };
@@ -50,6 +52,7 @@ const memeSlice = createSlice({
     },
     addElement: (state, action: PayloadAction<MemeElement>) => {
       state.elementMap[action.payload.id] = action.payload;
+      state.selectedElement = action.payload;
     },
     updateElement: (
       state,
@@ -119,9 +122,16 @@ const memeSlice = createSlice({
     setDraggingElementId: (state, action: PayloadAction<string | null>) => {
       state.draggingElementId = action.payload;
     },
-    setTemplateHeight: (state, action: PayloadAction<number>) => {
-      if (state.templateHeight !== action.payload) {
-        state.templateHeight = action.payload;
+    setTemplateSize: (
+      state,
+      action: PayloadAction<{height: number; width: number}>,
+    ) => {
+      const {height, width} = action.payload;
+      if (state.templateHeight !== height) {
+        state.templateHeight = height;
+      }
+      if (state.templateWidth !== width) {
+        state.templateWidth = width;
       }
     },
   },
@@ -150,7 +160,7 @@ export const {
   removeElement,
   duplicateElement,
   setDraggingElementId,
-  setTemplateHeight,
+  setTemplateSize,
 } = memeSlice.actions;
 
 export const updateTextElementStyle = <K extends keyof MemeElementTextStyle>(

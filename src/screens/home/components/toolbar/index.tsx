@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {View, Dimensions} from 'react-native';
+import {useCallback} from 'react';
+import {View} from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -15,17 +15,13 @@ import {useAppDispatch, useAppSelector} from '~/store/hooks';
 import {addElement} from '~/store/meme/meme-slice';
 import {MemeElement} from '~/types/meme';
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
-
 const POSITION_DENOMINATOR = 4;
-
-const DEFAULT_POSITION: MemeElement['position'] = {
-  x: SCREEN_WIDTH / POSITION_DENOMINATOR,
-  y: SCREEN_HEIGHT / POSITION_DENOMINATOR,
-};
 
 export const Toolbar: React.FC = () => {
   const dispatch = useAppDispatch();
+  const templateHeight = useAppSelector(state => state.meme.templateHeight);
+  const templateWidth = useAppSelector(state => state.meme.templateWidth);
+
   const hasSelectedTemplate = useAppSelector(
     state => !!state.meme.selectedTemplate,
   );
@@ -36,8 +32,11 @@ export const Toolbar: React.FC = () => {
     const newElement: MemeElement = {
       id: Date.now().toString(),
       type: 'text',
-      content: 'Double tap to edit',
-      position: {...DEFAULT_POSITION},
+      content: '',
+      position: {
+        x: templateWidth / POSITION_DENOMINATOR,
+        y: templateHeight / POSITION_DENOMINATOR,
+      },
       scale: 1,
       rotation: 0,
       style: {
@@ -46,7 +45,7 @@ export const Toolbar: React.FC = () => {
       },
     };
     dispatch(addElement(newElement));
-  }, [colors.text, dispatch]);
+  }, [colors.text, dispatch, templateHeight, templateWidth]);
 
   const handleImagePicker = useCallback(async () => {
     try {
@@ -70,7 +69,10 @@ export const Toolbar: React.FC = () => {
           id: Date.now().toString(),
           type: 'image',
           content: result.assets[0].uri,
-          position: {...DEFAULT_POSITION},
+          position: {
+            x: templateWidth / POSITION_DENOMINATOR,
+            y: templateHeight / POSITION_DENOMINATOR,
+          },
           scale: 1,
           rotation: 0,
           style: {...DEFAULT_MEME_IMAGE_STYLE},
@@ -80,7 +82,7 @@ export const Toolbar: React.FC = () => {
     } catch (error) {
       console.error('Error picking image:', error);
     }
-  }, [dispatch]);
+  }, [dispatch, templateHeight, templateWidth]);
 
   return (
     <View className="flex-row items-center justify-center gap-2 p-4">

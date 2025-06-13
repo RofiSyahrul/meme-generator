@@ -95,8 +95,18 @@ Key dependencies include:
 Currently, this app supports:
 
 - Creating memes with custom text and images
-- Adjusting text position and size
-- Saving memes to device
+- Text customization:
+  - Adjusting text position and size
+  - Changing text color
+  - Adjusting text opacity
+  - Adding/removing text background color
+- Image customization:
+  - Adjusting image opacity
+- Element management:
+  - Duplicating text elements
+  - Duplicating image elements
+  - Removing text elements
+  - Removing image elements
 
 ## Troubleshooting
 
